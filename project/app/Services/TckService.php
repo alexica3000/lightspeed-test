@@ -47,6 +47,7 @@ class TckService
     public function importProducts(string $brand)
     {
         try {
+            logger()->info('start lightspeed:import-products command');
             $response = Http::get($this->getBrandItemsUrl($brand), $this->getParams())->json();
             $assortments = $response[0]['assortment'][0];
             logger()->info('found ' . count($assortments) . ' assortments');
@@ -72,6 +73,7 @@ class TckService
                     ]);
                 }
             }
+            logger()->info('end lightspeed:import-products command');
         } catch (\Throwable $e) {
             logger()->error($e->getMessage());
         }
