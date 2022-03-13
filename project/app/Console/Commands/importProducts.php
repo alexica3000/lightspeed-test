@@ -2,10 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Services\TckService;
 use Illuminate\Console\Command;
 
 class importProducts extends Command
 {
+    private TckService $tckService;
+
     /**
      * The name and signature of the console command.
      *
@@ -25,9 +28,11 @@ class importProducts extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(TckService $tckService)
     {
         parent::__construct();
+
+        $this->tckService = $tckService;
     }
 
     /**

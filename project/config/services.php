@@ -30,4 +30,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'tck' => [
+        'url' => env('TCK_URL'),
+        'key' => env('TCK_KEY'),
+    ],
 ];
