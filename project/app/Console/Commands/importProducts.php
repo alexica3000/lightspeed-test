@@ -40,8 +40,12 @@ class importProducts extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
+        $this->info('start lightspeed:import-products command');
+        $this->tckService->importProducts('LOWA');
+        $this->info('end lightspeed:import-products command');
+
         return 0;
     }
 }

@@ -8,10 +8,12 @@ use JetBrains\PhpStorm\ArrayShape;
 class TckService
 {
     private string $apiKey;
+    private LightSpeedService $lightSpeedService;
 
-    public function __construct(string $apiKey)
+    public function __construct(string $apiKey, LightSpeedService $lightSpeedService)
     {
         $this->apiKey = $apiKey;
+        $this->lightSpeedService = $lightSpeedService;
     }
 
     public function getBaseUrl(): string
@@ -42,18 +44,32 @@ class TckService
         ];
     }
 
-    public function getBrandItems(string $brand)
+    public function importProducts(string $brand)
     {
         try {
             $response = Http::get($this->getBrandItemsUrl($brand), $this->getParams())->json();
-            $products = $response[0]['assortment'][0];
+            $assortments = $response[0]['assortment'][0];
+            logger()->info('found ' . count($assortments) . ' assortments');
 
-            foreach ($products as $key => $product) {
-                $productResponse = Http::get($this->getAssortmentUrl($key), $this->getParams())->json();
-                $variants = $productResponse[0]['sku'][0];
+            foreach ($assortments as $key => $assortment) {
+                $assortmentResponse = Http::get($this->getAssortmentUrl($key), $this->getParams())->json();
+                $skus = $assortmentResponse[0]['sku'][0];
+                logger()->info('found ' . count($assortments) . ' skus');
 
-                foreach ($variants as $k => $variant) {
-                    $productResponse = Http::get($this->getSkuUrl($k), $this->getParams())->json();
+                foreach ($skus as $k => $sku) {
+                    $skuResponse = Http::get($this->getSkuUrl($k), $this->getParams())->json();
+                    $lightSpeedClient = $this->lightSpeedService->getClient();
+                    $lightSpeedClient->products->create([
+                        "visibility"    => "visible",
+                        "data01"        => "",
+                        "data02"        => "",
+                        "data03"        => "",
+                        "title"         => $skuResponse[0]['title'][0]['en-GB'],
+                        "fulltitle"     => $skuResponse[0]['title'][0]['en-GB'],
+                        "description"   => $skuResponse[0]['description'][0]['en-GB'],
+                        "content"       => "",
+                        "brand"         => 4446231 // brand id for LOWA
+                    ]);
                 }
             }
         } catch (\Throwable $e) {

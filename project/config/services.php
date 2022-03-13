@@ -34,4 +34,11 @@ return [
         'url' => env('TCK_URL'),
         'key' => env('TCK_KEY'),
     ],
+
+    'ls' => [
+        'key'      => env('LS_KEY'),
+        'secret'   => env('LS_SECRET'),
+        'language' => env('LS_LANGUAGE'),
+        'cluster'  => env('LS_CLUSTER'),
+    ],
 ];
