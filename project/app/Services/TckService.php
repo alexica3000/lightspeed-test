@@ -60,7 +60,7 @@ class TckService
                 foreach ($skus as $k => $sku) {
                     $skuResponse = Http::get($this->getSkuUrl($k), $this->getParams())->json();
                     $lightSpeedClient = $this->lightSpeedService->getClient();
-                    $lightSpeedClient->products->create([
+                    $product = $lightSpeedClient->products->create([
                         "visibility"    => "visible",
                         "data01"        => "",
                         "data02"        => "",
@@ -71,6 +71,9 @@ class TckService
                         "content"       => "",
                         "brand"         => 4446231 // brand id for LOWA
                     ]);
+
+                    $variants = $lightSpeedClient->variants->get(null, ['product' => $product['id']]);
+                    $lightSpeedClient->variants->update($variants[0]['id'], ['priceIncl' => $skuResponse[0]['price'][0]['sale']]);
                 }
             }
             logger()->info('end lightspeed:import-products command');
